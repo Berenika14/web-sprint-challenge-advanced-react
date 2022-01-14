@@ -3,11 +3,14 @@ import MutationObserver from "mutationobserver-shim";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CheckoutForm from "./CheckoutForm";
+import App from "../App";
 
 // Write up the two tests here and make sure they are testing what the title shows
 
 test("renders without errors", () => {
-  render(<CheckoutForm />);
+  render(<App />);
+  const header = screen.queryByText(/react plants/i);
+  expect(header).toBeInTheDocument();
 });
 
 test("shows success message on submit with form details", () => {
@@ -26,8 +29,8 @@ test("shows success message on submit with form details", () => {
   userEvent.type(stateDisplay, "New York");
   userEvent.type(zipDisplay, "10011");
 
-  const button = screen.getByRole("button");
-  userEvent.click(button);
+  const checkout = screen.getByRole("button");
+  userEvent.click(checkout);
 
   const displayFirstName = screen.queryByText("Berenika");
   const displayLastName = screen.queryByText("Ahmetaj");
@@ -39,3 +42,8 @@ test("shows success message on submit with form details", () => {
   const message = screen.getByTestId("successMessage");
   expect(message).toBeInTheDocument();
 });
+
+//   const successMessageContainers = screen.queryAllByTestId("successMessage");
+//   if (successMessageContainers.length > 0) {
+//     expect(successMessageContainers[0].innerText).toBe("");
+//   }
