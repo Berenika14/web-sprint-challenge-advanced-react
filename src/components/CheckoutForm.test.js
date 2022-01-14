@@ -1,6 +1,6 @@
 import React from "react";
 import MutationObserver from "mutationobserver-shim";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CheckoutForm from "./CheckoutForm";
 import App from "../App";
@@ -13,7 +13,7 @@ test("renders without errors", () => {
   expect(header).toBeInTheDocument();
 });
 
-test("shows success message on submit with form details", () => {
+test("shows success message on submit with form details", async () => {
   render(<CheckoutForm />);
   const firstNameDisplay = screen.getByLabelText(/first name/i);
   const lastNameDisplay = screen.getByLabelText(/last name/i);
@@ -32,18 +32,16 @@ test("shows success message on submit with form details", () => {
   const checkout = screen.getByRole("button");
   userEvent.click(checkout);
 
-  const displayFirstName = screen.queryByText("Berenika");
-  const displayLastName = screen.queryByText("Ahmetaj");
-  const displayAddress = screen.queryByText("450 West 17th st");
-  const displayCity = screen.queryByText("New York");
-  const displayState = screen.queryByText("New York");
-  const displayZip = screen.queryByText("10011");
+  await waitFor(() => {
+    const displayFirstNameLastName = screen.getByText("Berenika Ahmetaj");
+    expect(displayFirstNameLastName).toBeInTheDocument();
+    const displayAddress = screen.getByText("450 West 17th st");
+    expect(displayAddress).toBeInTheDocument();
+    const cityStateZip = screen.getByText("New York, New York 10011");
+    expect(cityStateZip).toBeInTheDocument();
 
-  const message = screen.getByTestId("successMessage");
-  expect(message).toBeInTheDocument();
+    const message = screen.getByTestId("successMessage");
+    expect(message).toBeInTheDocument();
+    // screen.debug();
+  });
 });
-
-//   const successMessageContainers = screen.queryAllByTestId("successMessage");
-//   if (successMessageContainers.length > 0) {
-//     expect(successMessageContainers[0].innerText).toBe("");
-//   }
